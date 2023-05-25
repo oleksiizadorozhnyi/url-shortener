@@ -19,9 +19,17 @@ func New(storage *mongo.Storage) *Shortener {
 }
 
 func (s *Shortener) NewLink(newPage *model.Page) error {
+	if s.storage.IsLongUrlAlreadyExists(newPage.LongUrl) {
+		var err error
+		*newPage, err = s.storage.GetLinkByLongUrl(newPage.LongUrl)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
 	for i := 0; i < 100; i++ {
 		newPage.ShortUrl = s.ShortLinkCreator()
-		if s.storage.IsAlreadyExists(newPage.ShortUrl) {
+		if s.storage.IsShortUrlAlreadyExists(newPage.ShortUrl) {
 			if i == 99 {
 				return errors.New("can't make short link")
 			}
