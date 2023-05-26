@@ -49,9 +49,24 @@ func (s *Storage) GetLinkByShortUrl(shortUrl string) (model.Page, error) {
 	return link, err
 }
 
-func (s *Storage) IsAlreadyExists(shortUrl string) bool {
+func (s *Storage) GetLinkByLongUrl(longUrl string) (model.Page, error) {
+	var link model.Page
+	err := s.collectionPages.FindOne(context.Background(), bson.M{"long_url": longUrl}).Decode(&link)
+	return link, err
+}
+
+func (s *Storage) IsShortUrlAlreadyExists(shortUrl string) bool {
 	count, _ := s.collectionPages.CountDocuments(context.Background(),
 		bson.M{"short_url": shortUrl})
+	if count > 0 {
+		return true
+	}
+	return false
+}
+
+func (s *Storage) IsLongUrlAlreadyExists(longUrl string) bool {
+	count, _ := s.collectionPages.CountDocuments(context.Background(),
+		bson.M{"long_url": longUrl})
 	if count > 0 {
 		return true
 	}
