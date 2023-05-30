@@ -1,6 +1,7 @@
 package shortener
 
 import (
+	"context"
 	"errors"
 	"math/rand"
 	"perviymoiserver/pkg/adapter/storage/mongo"
@@ -18,10 +19,10 @@ func New(storage *mongo.Storage) *Shortener {
 	}
 }
 
-func (s *Shortener) NewLink(newPage *model.Page) error {
-	if s.storage.IsLongUrlAlreadyExists(newPage.LongUrl) {
+func (s *Shortener) NewLink(newPage *model.Page, ctx context.Context) error {
+	if s.storage.IsLongUrlAlreadyExists(newPage.LongUrl, ctx) {
 		var err error
-		*newPage, err = s.storage.GetLinkByLongUrl(newPage.LongUrl)
+		*newPage, err = s.storage.GetLinkByLongUrl(newPage.LongUrl, ctx)
 		if err != nil {
 			return err
 		}
@@ -29,7 +30,7 @@ func (s *Shortener) NewLink(newPage *model.Page) error {
 	}
 	for i := 0; i < 100; i++ {
 		newPage.ShortUrl = s.ShortLinkCreator()
-		if s.storage.IsShortUrlAlreadyExists(newPage.ShortUrl) {
+		if s.storage.IsShortUrlAlreadyExists(newPage.ShortUrl, ctx) {
 			if i == 99 {
 				return errors.New("can't make short link")
 			}
@@ -37,16 +38,16 @@ func (s *Shortener) NewLink(newPage *model.Page) error {
 		}
 		break
 	}
-	err := s.storage.SaveLink(*newPage)
+	err := s.storage.SaveLink(*newPage, ctx)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *Shortener) RedirectToLong(link *model.Page) error {
+func (s *Shortener) RedirectToLong(link *model.Page, ctx context.Context) error {
 	var err error
-	*link, err = s.storage.GetLinkByShortUrl(link.ShortUrl)
+	*link, err = s.storage.GetLinkByShortUrl(link.ShortUrl, ctx)
 	if err != nil {
 		return err
 	}

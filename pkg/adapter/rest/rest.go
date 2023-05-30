@@ -39,7 +39,7 @@ func (r *Rest) NewLinkHandler(c *gin.Context) {
 		c.String(http.StatusBadRequest, "It's not a link")
 		return
 	}
-	err := r.shortener.NewLink(&newLink)
+	err := r.shortener.NewLink(&newLink, c)
 	if err != nil {
 		c.String(http.StatusInternalServerError, "Technical error")
 		log.Print("NewLinkHandler() Link creation error ", err)
@@ -51,7 +51,7 @@ func (r *Rest) NewLinkHandler(c *gin.Context) {
 func (r *Rest) RedirectToLongHandler(c *gin.Context) {
 	var link model.Page
 	link.ShortUrl = c.Param("shortLink")
-	err := r.shortener.RedirectToLong(&link)
+	err := r.shortener.RedirectToLong(&link, c)
 	if err != nil {
 		c.String(http.StatusBadRequest, "There is no such short link")
 		return
