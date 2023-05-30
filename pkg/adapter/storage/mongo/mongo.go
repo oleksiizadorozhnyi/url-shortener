@@ -16,9 +16,13 @@ type Storage struct {
 	collectionPages *mongo.Collection
 }
 
-func New(ctx context.Context, connectionStrig string) *Storage {
+func New(ctx context.Context, mongoURI string) *Storage {
+	credential := options.Credential{
+		Username: "root",
+		Password: "example",
+	}
 	client, err := mongo.Connect(ctx,
-		options.Client().ApplyURI(connectionStrig))
+		options.Client().ApplyURI(mongoURI).SetAuth(credential))
 	if err != nil {
 		log.Fatal(err)
 	}
