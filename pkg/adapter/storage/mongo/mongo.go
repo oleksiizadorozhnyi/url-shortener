@@ -17,8 +17,12 @@ type Storage struct {
 }
 
 func New() *Storage {
+	credential := options.Credential{
+		Username: "root",
+		Password: "example",
+	}
 	client, err := mongo.Connect(context.Background(),
-		options.Client().ApplyURI("mongodb://localhost:27017"))
+		options.Client().ApplyURI("mongodb://mongo:27017").SetAuth(credential))
 	if err != nil {
 		log.Fatal(err)
 	}
