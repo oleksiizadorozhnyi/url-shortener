@@ -15,10 +15,10 @@ func main() {
 		panic(err)
 	}
 	ctx := context.Background()
-	storage := mongo.New(ctx, cfg.ConnectionString)
+	storage := mongo.New(ctx, cfg.MongoURI)
 	s := shortener.New(storage)
 	server := rest.New(s)
-	err := server.Start(cfg.PortGin)
+	err := server.Start(cfg.Port)
 	if err != nil {
 		panic(err)
 	}
