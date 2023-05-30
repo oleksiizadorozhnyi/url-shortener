@@ -16,9 +16,9 @@ type Storage struct {
 	collectionPages *mongo.Collection
 }
 
-func New(ctx context.Context) *Storage {
+func New(ctx context.Context, connectionStrig string) *Storage {
 	client, err := mongo.Connect(ctx,
-		options.Client().ApplyURI("mongodb://localhost:27017"))
+		options.Client().ApplyURI(connectionStrig))
 	if err != nil {
 		log.Fatal(err)
 	}

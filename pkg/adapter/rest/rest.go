@@ -22,9 +22,9 @@ func New(shortener *shortener.Shortener) *Rest {
 	}
 }
 
-func (r *Rest) Start() error {
+func (r *Rest) Start(port string) error {
 	r.CreateHandlers()
-	return r.router.Run(":8080")
+	return r.router.Run(port)
 }
 
 func (r *Rest) CreateHandlers() {
