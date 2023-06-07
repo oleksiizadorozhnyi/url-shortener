@@ -27,7 +27,7 @@ func TestShortener_RedirectToLong(t *testing.T) {
 	page := model.Page{}
 	fuzzer := fuzz.New().NilChance(0)
 	fuzzer.Fuzz(&page)
-
+	page.ShortUrl = "aboba"
 	err := shortener.RedirectToLong(&page, context.TODO())
 	if err != nil {
 		t.Error(err)
