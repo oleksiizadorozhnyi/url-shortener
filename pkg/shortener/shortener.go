@@ -4,16 +4,24 @@ import (
 	"context"
 	"errors"
 	"math/rand"
-	"perviymoiserver/pkg/adapter/storage/mongo"
 	"perviymoiserver/pkg/model"
 	"time"
 )
 
-type Shortener struct {
-	storage *mongo.Storage
+//go:generate mockery --name Storage
+type Storage interface {
+	SaveLink(link model.Page, ctx context.Context) error
+	GetLinkByLongUrl(longUrl string, ctx context.Context) (model.Page, error)
+	GetLinkByShortUrl(shortUrl string, ctx context.Context) (model.Page, error)
+	IsShortUrlAlreadyExists(shortUrl string, ctx context.Context) bool
+	IsLongUrlAlreadyExists(longUrl string, ctx context.Context) bool
 }
 
-func New(storage *mongo.Storage) *Shortener {
+type Shortener struct {
+	storage Storage
+}
+
+func New(storage Storage) *Shortener {
 	return &Shortener{
 		storage: storage,
 	}
